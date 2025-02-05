@@ -1,0 +1,2 @@
+aioslsk==1.4.1
+spotipy==2.25.0
