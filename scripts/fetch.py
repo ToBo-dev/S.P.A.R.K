@@ -31,8 +31,9 @@ def get_playlist_tracks(playlist_url):
         track = item['track']
         if track is not None:  # Check if the track is not None
             song_title = track['name']
+            album = track['album']['name']
             artist_names = track['artists'][0]['name']  # Get the main artist's name
-            playlist_data.append({'artist': artist_names, 'song': song_title})  # JSON object
+            playlist_data.append({'artist': artist_names, 'song': song_title, 'album': album})  # JSON object
     
     return playlist_data
 
@@ -43,5 +44,3 @@ if __name__ == "__main__":
     playlist_data = get_playlist_tracks(playlist_url)
 
     asyncio.run(downloadFiles(playlist_data))
-
-    print("get playlist data")

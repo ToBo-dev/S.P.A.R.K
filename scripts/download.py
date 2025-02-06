@@ -15,19 +15,33 @@ settings: Settings = Settings(
 )
 
 async def download_song(song, client):
-        print(song)
-        search_request: SearchRequest = await client.searches.search(song)
+        query = " - ".join([song["artist"], song["song"], song["album"]])
+        print("Searching with query:" + query)
+        search_request: SearchRequest = await client.searches.search(query)
         await asyncio.sleep(5)
-        if search_request.results:
-            print(search_request.results[0].shared_items[0])
+        download_target = await searchResults(search_request.results)
+        print(download_target)
+        #todo: download
+        
+                          
+async def searchResults(results):
+     if (results):
+            for result in results:
+                for item in result.shared_items:
+                     if (item.filename.lower().endswith(".mp3") and item.attributes[0].value == 320):
+                          return {"filename": item.filename, "user": result.username}
 
 async def downloadFiles(songs):
     client: SoulSeekClient = SoulSeekClient(settings)
+
+    await client.stop()
 
     await client.start()
     await client.login()
 
     await asyncio.sleep(5)
+
+    await download_song(songs[1], client)
 
     await client.stop()
 
