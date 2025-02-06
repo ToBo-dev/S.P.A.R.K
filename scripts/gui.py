@@ -1,13 +1,20 @@
 from fetch import *
 import customtkinter
 import tkinter
+import random
 face_var = "ฅ^._.^ฅ"
+face_list = [
+    "(ෆ˙ᵕ˙ෆ)♡", "(⸝⸝ᵕᴗᵕ⸝⸝)", "(⸝⸝> ᴗ•⸝⸝)", "(๑¯◡¯๑)", "(＾∇＾)", "(─‿‿─)",  
+    "٩( ๑╹ ꇴ╹)۶", "(๑˘︶˘๑)", "( ˶ˆ꒳ˆ˵ )", "(๑˃ᴗ˂)ﻭ", "(๑˃ᴗ˂)♡", 
+    "(⁎˃ᴗ˂⁎)", "(๑•ᴗ•๑)♡", "( •⌄• ू )✧",  
+    "(｡• ᵕ •｡)", "(♡⸝⸝•ᴗ•⸝⸝)", "(ฅ́ ˘ ฅ̀)", "(ˊᵕˋ)♡", "(๑´ლ`๑)", "(｡•̀ᴗ-)✧"
+]
 
 
 
 def button_callback():
     if entry.get() != "":
-        face.configure(text="=_=   working on it...")
+        face.configure(text=random.choice(face_list))
 
 app = customtkinter.CTk()
 app.title("S.P.A.R.K")
@@ -49,7 +56,7 @@ label3.grid(row=9, column=0, padx=(60, 5), pady=(140, 0), sticky="w")
 face = customtkinter.CTkLabel(master=app,
                                 text=face_var,
                                 text_color="black",
-                                font=("Manrope", 32),
+                                font=("Manrope", 48),
                                 width=120,
                                 height=25)
 face.grid(row=9, column=0, padx=(60, 5), pady=(140, 0), sticky="e")
