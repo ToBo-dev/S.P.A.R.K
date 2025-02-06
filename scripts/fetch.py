@@ -27,10 +27,9 @@ def get_playlist_tracks(playlist_url):
     playlist_data = []
     for item in tracks:
         track = item['track']
-        print(track)
         if track is not None:  # Check if the track is not None
             song_title = track['name']
-            artist_names = ", ".join([artist['name'] for artist in track['artists']])  # Join artists with a comma
+            artist_names = track['artists'][0]['name']
             playlist_data.append([artist_names, song_title])  # Artist first, then title
     
     return playlist_data
