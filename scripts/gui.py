@@ -1,4 +1,4 @@
-from scrape import *
+from fetch import *
 import customtkinter
 import tkinter
 face_var = "ฅ^._.^ฅ"
