@@ -27,9 +27,14 @@ async def downloadFiles(songs):
     await client.start()
     await client.login()
 
-    ##todo format search, figure out login
+    await asyncio.sleep(5)
 
+    await client.stop()
+
+    ##todo format search, figure out login
+"""
     tasks = [download_song(song, client) for song in songs]
     await asyncio.gather(*tasks)
 
     await client.stop()
+"""
