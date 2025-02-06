@@ -6,11 +6,12 @@ face_var = "ฅ^._.^ฅ"
 
 
 def button_callback():
-    face.configure(text="=_=   working on it...")
+    if entry.get() != "":
+        face.configure(text="=_=   working on it...")
 
 app = customtkinter.CTk()
 app.title("S.P.A.R.K")
-app.geometry("1200x800")
+app.geometry("1400x800")
 customtkinter.set_appearance_mode("light")
 
 text_var1 = tkinter.StringVar(value="S.P.A.R.K")
