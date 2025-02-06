@@ -3,37 +3,33 @@ from aioslsk.client import SoulSeekClient
 from aioslsk.settings import Settings, CredentialsSettings
 from aioslsk.search.model import SearchRequest
 import csv
+import pprint
 
 
 # Create default settings and configure credentials
 settings: Settings = Settings(
     credentials=CredentialsSettings(
-        username='tobia',
+        username='tobiaaa',
         password='2007'
     )
 )
 
-async def main():
+async def download_song(song, client):
+        print(song)
+        search_request: SearchRequest = await client.searches.search(song)
+        await asyncio.sleep(5)
+        if search_request.results:
+            print(search_request.results[0].shared_items[0])
+
+async def downloadFiles(songs):
     client: SoulSeekClient = SoulSeekClient(settings)
 
-    songs = []
-
-    with open('./playlist_data.csv', mode='r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            songs.append({'artist': row[0], 'song': row[1]})
-
-        print(songs)
-
-"""
     await client.start()
     await client.login()
-    global_request: SearchRequest = await client.searches.search('tyler, the creator - sweet / i thought you wanted to dance')
 
-    await asyncio.sleep(5)
+    ##todo format search, figure out login
 
-    print(global_request.results[0].shared_items[0])
+    tasks = [download_song(song, client) for song in songs]
+    await asyncio.gather(*tasks)
 
     await client.stop()
-"""
-asyncio.run(main())

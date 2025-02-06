@@ -1,6 +1,8 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import csv
+import json
+from download import *
 
 CLIENT_ID = '14b9c55513d344b48226972ef7e7b628'
 CLIENT_SECRET = '16880cd68c6a4323a863999ac7d691ee'
@@ -29,23 +31,17 @@ def get_playlist_tracks(playlist_url):
         track = item['track']
         if track is not None:  # Check if the track is not None
             song_title = track['name']
-            artist_names = track['artists'][0]['name']
-            playlist_data.append([artist_names, song_title])  # Artist first, then title
+            artist_names = track['artists'][0]['name']  # Get the main artist's name
+            playlist_data.append({'artist': artist_names, 'song': song_title})  # JSON object
     
     return playlist_data
 
-def save_to_csv(data, filename):
-    with open(filename, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f, delimiter=',')  # Fixed delimiter as '-'
-        # Write header
-        writer.writerow(['Artists', 'Song Title'])  # Header updated to match order
-        # Write data
-        writer.writerows(data)
 
 if __name__ == "__main__":
-    playlist_url = input("Enter the Spotify playlist URL: ")
+    playlist_url = "https://open.spotify.com/playlist/2rtwihTyLT7E6gLfrY6fHL?si=d8dbbf232a3347f3"
+    #playlist_url = input("Enter the Spotify playlist URL: ")
     playlist_data = get_playlist_tracks(playlist_url)
-    
-    # Save to CSV with fixed delimiter '-'
-    save_to_csv(playlist_data, 'playlist_data.csv')
-    print("Playlist data saved to 'playlist_data.csv'")
+
+    asyncio.run(downloadFiles(playlist_data))
+
+    print("get playlist data")
