@@ -34,6 +34,7 @@ def button_callback():
         face.configure(text=new_face)
         jump_animation(face)
         #label3.configure(text=label3._text + "\n test test test")
+        #yippeeeeee
 
 app = customtkinter.CTk()
 app.title("S.P.A.R.K")
