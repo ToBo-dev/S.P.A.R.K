@@ -30,8 +30,10 @@ face_list = [
 def button_callback():
     if entry.get() != "":
         new_face = random.choice(face_list)
+        print("test")
         face.configure(text=new_face)
-        jump_animation(face)  # Trigger the jump effect
+        jump_animation(face)
+        #label3.configure(text=label3._text + "\n test test test")
 
 app = customtkinter.CTk()
 app.title("S.P.A.R.K")
