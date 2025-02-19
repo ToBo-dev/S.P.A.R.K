@@ -39,8 +39,7 @@ def get_playlist_tracks(playlist_url):
 
 
 if __name__ == "__main__":
-    playlist_url = "https://open.spotify.com/playlist/2rtwihTyLT7E6gLfrY6fHL?si=d8dbbf232a3347f3"
-    #playlist_url = input("Enter the Spotify playlist URL: ")
+    playlist_url = input("Enter the Spotify playlist URL: ")
     playlist_data = get_playlist_tracks(playlist_url)
 
     asyncio.run(downloadFiles(playlist_data))
