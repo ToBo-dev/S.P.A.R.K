@@ -40,11 +40,12 @@ def button_callback():
         face.configure(text=new_face)
         jump_animation(face)
         link = entry.get()
-        bottom_label.configure(text=bottom_label._text + "\n download script initiliazed")
+        update_bottom_label("Download script initiated")
         
-        # Run the async function
+        # Run the async function with the update callback.
         async def run_async():
-            await downloadFiles(get_playlist_tracks(link))
+            # Pass the callback to downloadFiles
+            await downloadFiles(get_playlist_tracks(link), update_bottom_label)
             # Re-enable the button after completion
             app.after(0, lambda: button.configure(state="normal"))
         
@@ -53,6 +54,7 @@ def button_callback():
         
         # Schedule the async function to run in the event loop
         asyncio.run_coroutine_threadsafe(run_async(), loop)
+
 
 
 app = customtkinter.CTk()
@@ -204,6 +206,17 @@ bottom_label = customtkinter.CTkLabel(master=bottom_frame,
                                       text_color="black",
                                       font=("Manrope", 16))
 bottom_label.place(relx=0.5, rely=0.5, anchor="center")
+bottom_label.pack(pady=20)
+
+def update_bottom_label(new_message):
+    # Append the new message to the existing text.
+    def updater():
+        current_text = bottom_label.cget("text")
+        bottom_label.configure(text= new_message + "\n" + current_text)
+        new_face = random.choice(face_list)
+        face.configure(text=new_face)
+        jump_animation(face)
+    app.after(0, updater)
 
 # ---------------------------------------------------------------------
 # FACE JUMP ANIMATION

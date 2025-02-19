@@ -19,42 +19,38 @@ settings: Settings = Settings(
 
 download_semaphore = asyncio.Semaphore(1)
 
-async def limited_download_song(song, client, progress, overall_task_id):
+async def limited_download_song(song, client, progress, overall_task_id, update_callback):
     async with download_semaphore:
-        # Only 3 tasks can be active here at once.
-        return await download_song(song, client, progress, overall_task_id)#
+        return await download_song(song, client, progress, overall_task_id, update_callback)
+
     
 async def search_result_listener(event: SearchResultEvent):
     print(f"got a search result for query: {event.query.query} : {event.query.result}")
 
-async def download_song(song, client, progress: Progress, overall_task_id):
-
+async def download_song(song, client, progress: Progress, overall_task_id, update_callback):
     query = " - ".join([song["artist"], song["song"], song["album"]])
-    print("Searching with query:" + query)
+    update_callback(f"Searching with query: {query}")
     search_request: SearchRequest = await client.searches.search(query)
     await asyncio.sleep(10)
-    # todo: instead of sleeping do it with evenlistener to maybe make it more efficient idk its kinda slow
-    # CHECK NOTION
     download_target = await searchResults(search_request.results)
-
+    
     if not download_target:
         await emergency_download_yt()
+        update_callback("Falling back to YouTube download.")
         return
-
+    
     transfer: Transfer = await client.transfers.download(
         download_target["user"], download_target["filename"]
     )
-
-    while transfer.filesize == None:
+    
+    while transfer.filesize is None:
         await asyncio.sleep(0.1)
-
+    
     while not transfer.is_finalized():
         await asyncio.sleep(0.5)
-
-    progress.update(overall_task_id, advance=1)    
-
-    print(f"Download completed: {transfer.local_path}")
-
+    
+    progress.update(overall_task_id, advance=1)
+    update_callback(f"Download completed: {transfer.local_path}")
 
 async def emergency_download_yt():
     print("Downloading from youtube")
@@ -71,40 +67,38 @@ async def searchResults(results):
                     return {"filename": item.filename, "user": result.username, "filesize": item.attributes}
 
 
-async def downloadFiles(songs):
+async def downloadFiles(songs, update_callback):
     total_files = len(songs)
-
     client: SoulSeekClient = SoulSeekClient(settings)
     
-    #disable logging, not really needed atm, could be helpful if eli has problems and we can look at logs ig idk pookie, just cleaning the console right now
+    # Disable logging (if desired)
     logging.disable()
-
+    
     await client.stop()
-
     await client.start()
     await client.login()
-
-    print("Logging in...")
-
+    
+    update_callback("Logged in...")
+    
     await asyncio.sleep(5)
-
+    
     with Progress(
         TextColumn("[bold blue]{task.description}[/bold blue]"),
         BarColumn(),
         TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
     ) as progress:
-        # 1) Create an OVERALL task to track how many files are done
-        overall_task_id = progress.add_task(
-            "Overall", total=total_files,
-            # We'll manually update the "completed" count
-        )
-
-        # 2) Kick off a separate async job for each file
+        # Create an overall task to track progress.
+        overall_task_id = progress.add_task("Overall", total=total_files)
+        
         tasks = []
         for song in songs:
-            tasks.append(limited_download_song(song, client, progress, overall_task_id))
-
+            tasks.append(limited_download_song(song, client, progress, overall_task_id, update_callback))
+        
         await asyncio.gather(*tasks)
+    
+    await client.stop()
+    update_callback("All downloads completed.")
+
 
 
     await client.stop()

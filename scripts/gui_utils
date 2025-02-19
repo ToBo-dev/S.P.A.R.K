@@ -1,5 +1,0 @@
-def update_console(app, label, update_text):
-    current_text = label.cget("text")
-    new_text = current_text + "\n" + update_text
-    # Schedule update on the main thread:
-    app.after(0, lambda: label.configure(text=new_text))
