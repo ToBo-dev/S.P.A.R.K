@@ -7,6 +7,7 @@ from time import sleep
 import asyncio
 import threading
 
+
 face_var = "ฅ^._.^ฅ"
 face_list = [
     "=D", 
@@ -39,6 +40,7 @@ def button_callback():
         face.configure(text=new_face)
         jump_animation(face)
         link = entry.get()
+        bottom_label.configure(text=bottom_label._text + "\n download script initiliazed")
         
         # Run the async function
         async def run_async():
@@ -51,6 +53,7 @@ def button_callback():
         
         # Schedule the async function to run in the event loop
         asyncio.run_coroutine_threadsafe(run_async(), loop)
+
 
 app = customtkinter.CTk()
 app.title("S.P.A.R.K")
@@ -150,6 +153,8 @@ button = customtkinter.CTkButton(master=button_frame,
                                  command=button_callback)
 button.place(relx=0.5, rely=0.5, anchor="center")
 
+
+
 # ---------------------------------------------------------------------
 # BUTTON SIZE ANIMATION (with easing)
 # ---------------------------------------------------------------------
@@ -189,6 +194,16 @@ def on_leave(event):
 
 button.bind("<Enter>", on_enter)
 button.bind("<Leave>", on_leave)
+
+bottom_frame = customtkinter.CTkFrame(master=app, border_width=2, border_color="black")
+bottom_frame.grid(row=11, column=0, columnspan=2, padx=20, pady=10, sticky="we")
+bottom_frame.grid_propagate(False)
+
+bottom_label = customtkinter.CTkLabel(master=bottom_frame,
+                                      text="app started.",
+                                      text_color="black",
+                                      font=("Manrope", 16))
+bottom_label.place(relx=0.5, rely=0.5, anchor="center")
 
 # ---------------------------------------------------------------------
 # FACE JUMP ANIMATION
