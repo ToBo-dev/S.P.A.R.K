@@ -3,6 +3,9 @@ import customtkinter
 import tkinter
 import random
 import time
+from time import sleep
+import asyncio
+import threading
 
 face_var = "ฅ^._.^ฅ"
 face_list = [
@@ -24,17 +27,30 @@ face_list = [
     "~.~", 
 ]
 
-
+# Function to run the asyncio event loop in a separate thread
+def start_event_loop(loop):
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
 
 # When the button is clicked, change the face text and trigger a jump animation.
 def button_callback():
     if entry.get() != "":
         new_face = random.choice(face_list)
-        print("test")
         face.configure(text=new_face)
         jump_animation(face)
-        #label3.configure(text=label3._text + "\n test test test")
-        #yippeeeeee
+        link = entry.get()
+        
+        # Run the async function
+        async def run_async():
+            await downloadFiles(get_playlist_tracks(link))
+            # Re-enable the button after completion
+            app.after(0, lambda: button.configure(state="normal"))
+        
+        # Disable the button during download
+        button.configure(state="disabled")
+        
+        # Schedule the async function to run in the event loop
+        asyncio.run_coroutine_threadsafe(run_async(), loop)
 
 app = customtkinter.CTk()
 app.title("S.P.A.R.K")
@@ -198,4 +214,14 @@ def jump_animation(widget, jump_offset=20, steps=5):
     positions = up_positions + down_positions
     animate_y(widget, positions, delay=10)
 
+# Create the event loop in a separate thread
+loop = asyncio.new_event_loop()
+event_loop_thread = threading.Thread(target=start_event_loop, args=(loop,), daemon=True)
+event_loop_thread.start()
+
+# Start the GUI main loop
 app.mainloop()
+
+# Stop the event loop when the GUI is closed
+loop.call_soon_threadsafe(loop.stop)
+event_loop_thread.join()
